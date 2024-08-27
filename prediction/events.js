@@ -576,7 +576,7 @@ function plotHorizontalArrow(chartId, value, name) {
             marker: {
                 size: 10,
                 symbol: 'triangle-up', // 使用向上的三角形作為標記
-                color: 'blue'
+                color: 'green'
             },
             text: name,
             textposition: 'top center',
