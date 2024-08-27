@@ -155,7 +155,7 @@ function plotGraphs(data, inputDonor, inputAcceptor) {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${correlation.toFixed(2)}<br>紅色圓點= Donor, 藍色圓點= Acceptor, 綠色圓點= Donor + Acceptor`,
+            text: `r = ${correlation.toFixed(2)}<br>紅色圓點= Donor, 藍色圓點= Acceptor, 綠色圓點or三角形= Donor + Acceptor`,
             showarrow: false
         }],
         shapes: [{
