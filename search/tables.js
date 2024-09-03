@@ -119,18 +119,20 @@ function createDonorPropertiesTable(donorName, data) {
 
     tableHtml += `<h3>${donorName} 的 Donor 性質</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Donor === donorName)[`${metric}.1`];
+        const formattedPredictedValue = predictedValue.toPrecision(3);  // 格式化為三位有效數字
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
+
 
 function createAcceptorPropertiesTable(acceptorName, data) {
     const results = calculateMeanAndStdDevForAcceptor(acceptorName, data);
@@ -142,18 +144,20 @@ function createAcceptorPropertiesTable(acceptorName, data) {
 
     tableHtml += `<h3>${acceptorName} 的 Acceptor 性質</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Acceptor === acceptorName)[`${metric}.1`];
+        const formattedPredictedValue = predictedValue.toPrecision(3);  // 格式化為三位有效數字
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
+
 
 function createDonorandAcceptorPerformanceTable(donorName, acceptorName, data) {
     const results = calculateMeanAndStdDevForDonorAndAcceptor(donorName, acceptorName, data);
@@ -165,18 +169,20 @@ function createDonorandAcceptorPerformanceTable(donorName, acceptorName, data) {
 
     tableHtml += `<h3>${donorName} / ${acceptorName} 的性能數據</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Donor === donorName && item.Acceptor === acceptorName)[`${metric}.1`];
+        const formattedPredictedValue = predictedValue.toPrecision(3);  // 格式化為三位有效數字
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
+
 
 
 
