@@ -79,7 +79,7 @@ function createDonorandAcceptorPerformanceTable(donorName, acceptorName, data) {
 
     tableHtml += `<h3>${donorName} / ${acceptorName} 的性能數據</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Donor === donorName && item.Acceptor === acceptorName)[`${metric}.1`];
@@ -111,15 +111,15 @@ function generatePredictionTable(data, type, materialName = '') {
         propertiesTable += `
             <tr>
                 <td>HOMO of Donor (eV)</td>
-                <td>${data['HOMO of Donor (eV).1']}</td>
+                <td>${Number(data['HOMO of Donor (eV).1']).toPrecision(3)}</td>
             </tr>
             <tr>
                 <td>LUMO of Donor (eV)</td>
-                <td>${data['LUMO of Donor (eV).1']}</td>
+                <td>${Number(data['LUMO of Donor (eV).1']).toPrecision(3)}</td>
             </tr>
             <tr>
                 <td>Bandgap of Donor (eV)</td>
-                <td>${data['Bandgap of Donor (eV).1']}</td>
+                <td>${Number(data['Bandgap of Donor (eV).1']).toPrecision(3)}</td>
             </tr>
         `;
     }
@@ -127,15 +127,15 @@ function generatePredictionTable(data, type, materialName = '') {
         propertiesTable += `
             <tr>
                 <td>HOMO of Acceptor (eV)</td>
-                <td>${data['HOMO of Acceptor (eV).1']}</td>
+                <td>${Number(data['HOMO of Acceptor (eV).1']).toPrecision(3)}</td>
             </tr>
             <tr>
                 <td>LUMO of Acceptor (eV)</td>
-                <td>${data['LUMO of Acceptor (eV).1']}</td>
+                <td>${Number(data['LUMO of Acceptor (eV).1']).toPrecision(3)}</td>
             </tr>
             <tr>
                 <td>Bandgap of Acceptor (eV)</td>
-                <td>${data['Bandgap of Acceptor (eV).1']}</td>
+                <td>${Number(data['Bandgap of Acceptor (eV).1']).toPrecision(3)}</td>
             </tr>
         `;
     }
@@ -143,6 +143,7 @@ function generatePredictionTable(data, type, materialName = '') {
     propertiesTable += '</table></div>';
     return materialName ? `<h3>${materialName}</h3>${propertiesTable}` : propertiesTable;
 }
+
 
 function getValuesForDonor(donorName, metric, data) {
     // 使用 filter 過濾出所有 Donor 名字與 donorName 匹配的項目
@@ -225,18 +226,20 @@ function createDonorPropertiesTable(donorName, data) {
 
     tableHtml += `<h3>${donorName} 的 Donor 性質</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Donor === donorName)[`${metric}.1`];
+        const formattedPredictedValue = predictedValue.toPrecision(3);  // 格式化為三位有效數字
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
+
 
 function createAcceptorPropertiesTable(acceptorName, data) {
     const results = calculateMeanAndStdDevForAcceptor(acceptorName, data);
@@ -248,75 +251,19 @@ function createAcceptorPropertiesTable(acceptorName, data) {
 
     tableHtml += `<h3>${acceptorName} 的 Acceptor 性質</h3>`;
     tableHtml += `<table style="${tableStyle}">`;
-    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
+    tableHtml += `<tr><th style="${thStyle}">參數</th><th style="${thStyle}">實驗平均值 ± 標準差</th><th style="${thStyle}">預測值</th><th style="${thStyle}">誤差</th></tr>`;
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Acceptor === acceptorName)[`${metric}.1`];
+        const formattedPredictedValue = predictedValue.toPrecision(3);  // 格式化為三位有效數字
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
-function createPropertiesTable(data, type, materialName = '') {
-    let propertiesTable = `
-        <div class="table-container">
-            <table>
-                <tr>
-                    <th>Property</th>
-                    <th>Experiment</th>
-                    <th>Prediction</th>
-                    <th>Error (%)</th>
-                </tr>
-    `;
-    if (type === 'donor' || type === 'both') {
-        propertiesTable += `
-            <tr>
-                <td>HOMO of Donor (eV)</td>
-                <td>${data['HOMO of Donor (eV)']}</td>
-                <td>${data['HOMO of Donor (eV).1']}</td>
-                <td>${((data['HOMO of Donor (eV).1'] - data['HOMO of Donor (eV)']) / data['HOMO of Donor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>LUMO of Donor (eV)</td>
-                <td>${data['LUMO of Donor (eV)']}</td>
-                <td>${data['LUMO of Donor (eV).1']}</td>
-                <td>${((data['LUMO of Donor (eV).1'] - data['LUMO of Donor (eV)']) / data['LUMO of Donor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>Bandgap of Donor (eV)</td>
-                <td>${data['Bandgap of Donor (eV)']}</td>
-                <td>${data['Bandgap of Donor (eV).1']}</td>
-                <td>${((data['Bandgap of Donor (eV).1'] - data['Bandgap of Donor (eV)']) / data['Bandgap of Donor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-        `;
-    }
-    if (type === 'acceptor' || type === 'both') {
-        propertiesTable += `
-            <tr>
-                <td>HOMO of Acceptor (eV)</td>
-                <td>${data['HOMO of Acceptor (eV)']}</td>
-                <td>${data['HOMO of Acceptor (eV).1']}</td>
-                <td>${((data['HOMO of Acceptor (eV).1'] - data['HOMO of Acceptor (eV)']) / data['HOMO of Acceptor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>LUMO of Acceptor (eV)</td>
-                <td>${data['LUMO of Acceptor (eV)']}</td>
-                <td>${data['LUMO of Acceptor (eV).1']}</td>
-                <td>${((data['LUMO of Acceptor (eV).1'] - data['LUMO of Acceptor (eV)']) / data['LUMO of Acceptor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>Bandgap of Acceptor (eV)</td>
-                <td>${data['Bandgap of Acceptor (eV)']}</td>
-                <td>${data['Bandgap of Acceptor (eV).1']}</td>
-                <td>${((data['Bandgap of Acceptor (eV).1'] - data['Bandgap of Acceptor (eV)']) / data['Bandgap of Acceptor (eV)'] * 100).toFixed(2)}</td>
-            </tr>
-        `;
-    }
 
-    propertiesTable += '</table></div>';
-    return materialName ? `<h3>${materialName}</h3>${propertiesTable}` : propertiesTable;
-}
+
 
