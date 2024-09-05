@@ -83,14 +83,17 @@ function createDonorandAcceptorPerformanceTable(donorName, acceptorName, data) {
 
     Object.entries(results).forEach(([metric, stats]) => {
         const predictedValue = data.find(item => item.Donor === donorName && item.Acceptor === acceptorName)[`${metric}.1`];
+        // 將預測值格式化為三位有效數字
+        const formattedPredictedValue = Number(predictedValue).toPrecision(3);
         const error = calculateError(stats.mean, predictedValue);
 
-        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${predictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
+        tableHtml += `<tr><td style="${tdStyle}">${metric}</td><td style="${tdStyle}">${stats.mean} ± ${stats.stdDev}</td><td style="${tdStyle}">${formattedPredictedValue}</td><td style="${tdStyle}">${error}%</td></tr>`;
     });
 
     tableHtml += '</table>';
     return tableHtml;
 }
+
 
 
 
