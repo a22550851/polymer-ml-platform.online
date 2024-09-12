@@ -317,7 +317,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${homoaCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${homoaCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
@@ -351,7 +351,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${lumoaCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${lumoaCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
@@ -385,7 +385,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${homodCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${homodCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
@@ -419,7 +419,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${lumodCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${lumodCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
@@ -453,7 +453,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${bandgapAcceptorCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${bandgapAcceptorCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
@@ -487,7 +487,7 @@ acceptorItems.forEach(acceptorItem => {
             y: 0,
             xanchor: 'right',
             yanchor: 'bottom',
-            text: `r = ${bandgapDonorCorrelation.toFixed(2)}<br>紅色圓點or藍色三角形代表輸入材料`,
+            text: `r = ${bandgapDonorCorrelation.toFixed(2)}<br>紅色圓點or綠色三角形代表輸入材料`,
             showarrow: false
         }],
         shapes: [
