@@ -104,45 +104,46 @@ document.getElementById('nameToStructureBtn').addEventListener('click', async fu
     await handleChemicalStructure(donor, acceptor);
 });
 
+// 查找 Donor SMILES 的函數
+function findDonorSmiles(donorName) {
+    const donorItem = data.find(item => item.Donor === donorName);
+    return donorItem ? donorItem['Donor SMILES'] : null;
+}
 
+// 查找 Acceptor SMILES 的函數
+function findAcceptorSmiles(acceptorName) {
+    const acceptorItem = data.find(item => item.Acceptor === acceptorName);
+    return acceptorItem ? acceptorItem['Acceptor SMILES'] : null;
+}
 async function handleChemicalStructure(donorName, acceptorName) {
-    var donorSmiles = data.find(item => item.Donor === donorName)?.['Donor SMILES'];
-    var acceptorSmiles = data.find(item => item.Acceptor === acceptorName)?.['Acceptor SMILES'];
+    // 從數據中查找 Donor SMILES 和 Acceptor SMILES
+    var donorSmiles = findDonorSmiles(donorName);
+    var acceptorSmiles = findAcceptorSmiles(acceptorName);
 
-    document.getElementById('result').innerHTML = '';
-    document.getElementById('chartContainerPerformance').style.display = 'none';
-    document.getElementById('chartContainerProperties').style.display = 'none';
-
+    // 檢查並渲染捐贈者 SMILES
     if (donorSmiles) {
         renderSmiles(donorSmiles.trim(), 'donorCanvas');
         changeCanvasLabelColor('donorCanvas', 'black');
     } else {
-        donorSmiles = await convertNameToSmiles(donorName);
-        if (donorSmiles) {
-            renderSmiles(donorSmiles.trim(), 'donorCanvas');
-            changeCanvasLabelColor('donorCanvas', 'black');
-        } 
+        console.error(`未找到捐贈者的 SMILES: ${donorName}`);
     }
 
+    // 檢查並渲染受贈者 SMILES
     if (acceptorSmiles) {
         renderSmiles(acceptorSmiles.trim(), 'acceptorCanvas');
         changeCanvasLabelColor('acceptorCanvas', 'black');
     } else {
-        acceptorSmiles = await convertNameToSmiles(acceptorName);
-        if (acceptorSmiles) {
-            renderSmiles(acceptorSmiles.trim(), 'acceptorCanvas');
-            changeCanvasLabelColor('acceptorCanvas', 'black');
-        } 
+        console.error(`未找到受贈者的 SMILES: ${acceptorName}`);
     }
 
-    document.getElementById('smilesDisplay').innerHTML = '';
-    document.getElementById('smilesDrawerContainer').style.display = 'flex';
+    document.getElementById('smilesDrawerContainer').style.display = 'flex'; // 顯示化學結構繪製容器
 }
+
 
 // 使用PubChem API將名稱轉換為SMILES的函數
 async function convertNameToSmiles(name) {
     try {
-        const response = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${name}/property/CanonicalSMILES/JSON`);
+        const response = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/property/CanonicalSMILES/JSON`);
         const data = await response.json();
         if (data.PropertyTable && data.PropertyTable.Properties && data.PropertyTable.Properties.length > 0) {
             return data.PropertyTable.Properties[0].CanonicalSMILES;
@@ -163,22 +164,61 @@ function filterMatchingItems(data, donorName, acceptorName) {
 }
 
 async function findPerformance() {
-    resetResults(); // 重置結果
-    clearCanvas('donorCanvas');
-    clearCanvas('acceptorCanvas');
+    // 重置結果並清空畫布
+    resetResults(); 
+    clearCanvas('donorCanvas'); 
+    clearCanvas('acceptorCanvas'); 
+
+    // 從輸入框中獲取捐贈者和受贈者的名稱
     const donor = document.getElementById('donorInput').value.trim();
     const acceptor = document.getElementById('acceptorInput').value.trim();
     const resultElement = document.getElementById('result');
 
-    // 處理化學結構並顯示 SMILES 繪圖區域
-    await handleChemicalStructure(donor, acceptor);
-    document.getElementById('smilesDrawerContainer').style.display = 'flex';
-    document.getElementById('chartContainerProperties').style.display = 'none';
-
+    // 如果捐贈者和受贈者名稱都為空，顯示錯誤信息
     if (!donor && !acceptor) {
         resultElement.innerHTML = '<p class="error">Please enter at least donor or acceptor</p>';
         return;
     }
+
+    // 從數據中查找對應的 SMILES
+    let donorSmiles = findDonorSmiles(donor);
+    let acceptorSmiles = findAcceptorSmiles(acceptor);
+    
+    // 如果未找到 Donor SMILES，使用 API 將名稱轉換為 SMILES 並繪圖
+    if (!donorSmiles && donor) {
+        donorSmiles = await convertNameToSmiles(donor);
+        console.log(`Donor SMILES from API: ${donorSmiles}`);
+        if (donorSmiles) {
+            renderSmiles(donorSmiles.trim(), 'donorCanvas');
+            changeCanvasLabelColor('donorCanvas', 'black');
+        }
+    } else if (donorSmiles) {
+        renderSmiles(donorSmiles.trim(), 'donorCanvas');
+        changeCanvasLabelColor('donorCanvas', 'black');
+    }
+
+    // 如果未找到 Acceptor SMILES，使用 API 將名稱轉換為 SMILES 並繪圖
+    if (!acceptorSmiles && acceptor) {
+        acceptorSmiles = await convertNameToSmiles(acceptor);
+        console.log(`Acceptor SMILES from API: ${acceptorSmiles}`);
+        if (acceptorSmiles) {
+            renderSmiles(acceptorSmiles.trim(), 'acceptorCanvas');
+            changeCanvasLabelColor('acceptorCanvas', 'black');
+        }
+    } else if (acceptorSmiles) {
+        renderSmiles(acceptorSmiles.trim(), 'acceptorCanvas');
+        changeCanvasLabelColor('acceptorCanvas', 'black');
+    }
+
+    // 如果仍然未能獲取 SMILES，顯示錯誤信息
+    if (!donorSmiles && !acceptorSmiles) {
+        resultElement.innerHTML = '<p class="error">SMILES not found for the given Donor or Acceptor</p>';
+        return;
+    }
+
+    // 顯示化學結構繪製容器
+    document.getElementById('smilesDrawerContainer').style.display = 'flex'; 
+    document.getElementById('chartContainerProperties').style.display = 'none'; 
 
     // 使用 filterMatchingItems 過濾出匹配項目
     const matchingItems = filterMatchingItems(data, donor, acceptor);
@@ -187,24 +227,24 @@ async function findPerformance() {
     const donorItem = donor ? data.find(item => item.Donor === donor) : null;
     const acceptorItem = acceptor ? data.find(item => item.Acceptor === acceptor) : null;
 
-    // 將名稱轉換為 SMILES 並獲取預測數據
-    const donorSmiles = donor ? await convertNameToSmiles(donor) : '';
-    const acceptorSmiles = acceptor ? await convertNameToSmiles(acceptor) : '';
+    // 獲取預測數據並傳遞給後端
     const predictionData = await fetchPerformancePredictionData(donorSmiles, acceptorSmiles);
 
-    // 情況 1: Donor 和 Acceptor 都在數據庫中
+    // 確認預測數據是否正確接收
+    if (predictionData) {
+        console.log('Performance Prediction Data:', predictionData); // 檢查 API 返回的預測數據
+    } else {
+        console.error('Failed to fetch performance prediction data.'); // 顯示錯誤信息
+    }
+
+    // 根據不同情況顯示結果
     if (matchingItems.length > 0) {
+        // 情況 1: Donor 和 Acceptor 都在數據庫中
         document.getElementById('tablePCE').innerHTML = createDonorandAcceptorPerformanceTable(donor, acceptor, data);
         plotGraphs(data, donor, acceptor);
         document.getElementById('chartContainerPerformance').style.display = 'block';
-
-    // 情況 2: Donor 和 Acceptor 都不在數據庫中
     } else if (matchingItems.length === 0 && donor && acceptor) {
-        renderSmiles(donorSmiles, 'donorCanvas');
-        renderSmiles(acceptorSmiles, 'acceptorCanvas');
-        changeCanvasLabelColor('donorCanvas', 'black');
-        changeCanvasLabelColor('acceptorCanvas', 'black');
-
+        // 情況 2: Donor 和 Acceptor 都不在數據庫中
         if (predictionData) {
             document.getElementById('tablePCE').innerHTML = createPredictionOnlyTable(predictionData, true, `${donor}–${acceptor}`);
             plotGraphs(data, donor, acceptor);
@@ -213,26 +253,18 @@ async function findPerformance() {
         } else {
             resultElement.innerHTML = '沒有找到匹配的數據，也無法計算。';
         }
-
-    // 情況 3: Donor 存在於數據庫中，且 Acceptor 未輸入
     } else if (donor && donorItem && !acceptor) {
+        // 情況 3: Donor 存在於數據庫中，且 Acceptor 未輸入
         resultElement.innerHTML = 'Donor 存在於數據庫中，顯示相關分布圖。';
         plotGraphs(data, donor, null);
         document.getElementById('chartContainerPerformance').style.display = 'block';
-
-    // 情況 4: Acceptor 存在於數據庫中，且 Donor 未輸入
     } else if (acceptor && acceptorItem && !donor) {
+        // 情況 4: Acceptor 存在於數據庫中，且 Donor 未輸入
         resultElement.innerHTML = 'Acceptor 存在於數據庫中，顯示相關分布圖。';
         plotGraphs(data, null, acceptor);
         document.getElementById('chartContainerPerformance').style.display = 'block';
-
-    // 情況 5: Donor 在數據庫中，且 Acceptor 不存在於數據庫中
     } else if (donor && donorItem && acceptor && !acceptorItem) {
-        renderSmiles(donorSmiles, 'donorCanvas');
-        renderSmiles(acceptorSmiles, 'acceptorCanvas');
-        changeCanvasLabelColor('donorCanvas', 'black');
-        changeCanvasLabelColor('acceptorCanvas', 'black');
-
+        // 情況 5: Donor 在數據庫中，且 Acceptor 不存在於數據庫中
         if (predictionData) {
             document.getElementById('tablePCE').innerHTML = createPredictionOnlyTable(predictionData, true, `${donor}–${acceptor}`);
             plotGraphs(data, donor, acceptor);
@@ -241,12 +273,8 @@ async function findPerformance() {
         } else {
             resultElement.innerHTML = '沒有找到匹配的數據，也無法計算。';
         }
-
-    // 情況 6: Acceptor 在數據庫中，且 Donor 不存在於數據庫中
     } else if (acceptor && acceptorItem && donor && !donorItem) {
-        renderSmiles(donorSmiles, 'donorCanvas');
-        changeCanvasLabelColor('donorCanvas', 'black');
-
+        // 情況 6: Acceptor 在數據庫中，且 Donor 不存在於數據庫中
         if (predictionData) {
             document.getElementById('tablePCE').innerHTML = createPredictionOnlyTable(predictionData, true, `${donor}–${acceptor}`);
             plotGraphs(data, donor, acceptor);
@@ -255,20 +283,21 @@ async function findPerformance() {
         } else {
             resultElement.innerHTML = '沒有找到匹配的數據，也無法計算。';
         }
-
-    // 情況 7: Donor 不存在於數據庫中，且 Acceptor 未輸入
     } else if (donor && !donorItem && !acceptor) {
+        // 情況 7: Donor 不存在於數據庫中，且 Acceptor 未輸入
         resultElement.innerHTML = 'Donor 不存在於數據庫中，顯示相關分布圖。';
         plotGraphs(data, donor, null);
         document.getElementById('chartContainerPerformance').style.display = 'block';
-
-    // 情況 8: Acceptor 不存在於數據庫中，且 Donor 未輸入
     } else if (acceptor && !acceptorItem && !donor) {
+        // 情況 8: Acceptor 不存在於數據庫中，且 Donor 未輸入
         resultElement.innerHTML = 'Acceptor 不存在於數據庫中，顯示相關分布圖。';
         plotGraphs(data, null, acceptor);
         document.getElementById('chartContainerPerformance').style.display = 'block';
     }
 }
+
+
+
 
 
 
